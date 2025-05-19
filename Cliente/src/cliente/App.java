@@ -1,18 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package cliente;
 
 import java.net.InetAddress;
+import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
+import javax.swing.JOptionPane;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
-/**
- *
- * @author lighttigerxiv
- */
+/// Referencias
+/// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
+
+
 public class App extends javax.swing.JFrame {
 
     /**
@@ -70,12 +71,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        serverField.setText("http://localhost:8080");
-        serverField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                serverFieldActionPerformed(evt);
-            }
-        });
+        serverField.setText("http://localhost:8080/Servidor/api");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Servidor");
@@ -83,18 +79,17 @@ public class App extends javax.swing.JFrame {
         labelUsername.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelUsername.setText("Username");
 
-        usernameField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                usernameFieldActionPerformed(evt);
-            }
-        });
-
         labelPasta.setText("Nenhuma pasta selecionada");
 
         labelPastaPartilhada.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelPastaPartilhada.setText("Pasta Partilhada");
 
         sessionButton.setText("Login");
+        sessionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sessionButtonActionPerformed(evt);
+            }
+        });
 
         selectFolderButton.setText("Selecionar Pasta");
         selectFolderButton.addActionListener(new java.awt.event.ActionListener() {
@@ -175,17 +170,59 @@ public class App extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void usernameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_usernameFieldActionPerformed
-
     private void selectFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectFolderButtonActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
-    private void serverFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_serverFieldActionPerformed
+    private void sessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sessionButtonActionPerformed
+        baseURL = serverField.getText();
+        username = usernameField.getText();
+
+        Client client = ClientBuilder.newClient();
+
+        Response loginResponse = client.target(baseURL + "/users/login")
+                .request()
+                .accept("application/json")
+                .post(Entity.json(new LoginBody(username)));
+
+        int code = loginResponse.getStatus();
+
+        if (code == 409) {
+            JOptionPane.showMessageDialog(this,
+                    "Utilizador já existe na sessão",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+
+            return;
+        }
+
+        Response response = client.target(baseURL + "/users")
+                .request()
+                .accept("application/json")
+                .get();
+
+        code = response.getStatus();
+
+        System.out.println("code: " + code);
+
+        if (code != 200) {
+            return;
+        }
+
+        List<String> usernames = response.readEntity(new GenericType<List<String>>() {
+        });
+
+        DefaultListModel<String> usersList = new DefaultListModel<>();
+
+        for (String name : usernames) {
+            if (!name.trim().toLowerCase().equals(username.trim().toLowerCase())) {
+                usersList.addElement(name);
+            }
+        }
+
+        clientsList.setModel(usersList);
+
+    }//GEN-LAST:event_sessionButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -241,4 +278,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JButton sessionButton;
     private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
+
+    private String baseURL;
+    private String username;
 }

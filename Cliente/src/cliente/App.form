@@ -167,11 +167,8 @@
     </Component>
     <Component class="javax.swing.JTextField" name="serverField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="http://localhost:8080"/>
+        <Property name="text" type="java.lang.String" value="http://localhost:8080/Servidor/api"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="serverFieldActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="labelServidor">
       <Properties>
@@ -190,9 +187,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="usernameField">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="usernameFieldActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="labelPasta">
       <Properties>
@@ -211,6 +205,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Login"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sessionButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="selectFolderButton">
       <Properties>
