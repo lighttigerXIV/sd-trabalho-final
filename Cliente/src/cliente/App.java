@@ -4,6 +4,11 @@
  */
 package cliente;
 
+import java.net.InetAddress;
+import javax.swing.DefaultListModel;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+
 /**
  *
  * @author lighttigerxiv
@@ -15,6 +20,12 @@ public class App extends javax.swing.JFrame {
      */
     public App() {
         initComponents();
+
+        try {
+            String hostname = InetAddress.getLocalHost().getHostName();
+            usernameField.setText(hostname);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -26,81 +37,167 @@ public class App extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
+        labelClientes = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        filesTree = new javax.swing.JTree();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        clientsList = new javax.swing.JList<>();
+        labelConfiguracoes = new javax.swing.JLabel();
+        labelFicheiros = new javax.swing.JLabel();
+        serverField = new javax.swing.JTextField();
+        labelServidor = new javax.swing.JLabel();
+        labelPorta = new javax.swing.JLabel();
+        portField = new javax.swing.JTextField();
+        labelUsername = new javax.swing.JLabel();
+        usernameField = new javax.swing.JTextField();
+        labelPasta = new javax.swing.JLabel();
+        labelPastaPartilhada = new javax.swing.JLabel();
+        sessionButton = new javax.swing.JButton();
+        selectFolderButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Trabalho Final");
+        setTitle("Cliente");
         setResizable(false);
 
-        jLabel1.setText("Clientes");
+        labelClientes.setText("Clientes");
 
-        jLabel2.setText("Ficheiros");
+        jScrollPane2.setViewportView(filesTree);
 
-        jLabel3.setText("Servidor");
+        jScrollPane3.setViewportView(clientsList);
 
-        jTextField1.setText("Quim Roscas");
+        labelConfiguracoes.setFont(new java.awt.Font("Inter Display", 1, 18)); // NOI18N
+        labelConfiguracoes.setText("Configurações");
 
-        jLabel5.setText("Nome");
+        labelFicheiros.setText("Ficheiros");
+
+        serverField.setText("127.0.0.1");
+        serverField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                serverFieldActionPerformed(evt);
+            }
+        });
+
+        labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
+        labelServidor.setText("Servidor");
+
+        labelPorta.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
+        labelPorta.setText("Porta");
+
+        portField.setText("8080");
+
+        labelUsername.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
+        labelUsername.setText("Username");
+
+        usernameField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usernameFieldActionPerformed(evt);
+            }
+        });
+
+        labelPasta.setText("Nenhuma pasta selecionada");
+
+        labelPastaPartilhada.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
+        labelPastaPartilhada.setText("Pasta Partilhada");
+
+        sessionButton.setText("Login");
+
+        selectFolderButton.setText("Selecionar Pasta");
+        selectFolderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectFolderButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 613, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1))))
-                .addContainerGap())
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(labelConfiguracoes)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(labelClientes))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(labelFicheiros)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(labelServidor)
+                                .addComponent(serverField, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(labelPorta)
+                                .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(labelUsername)
+                                    .addComponent(usernameField, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(labelPastaPartilhada)
+                                    .addComponent(labelPasta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(selectFolderButton))
+                            .addGap(362, 362, 362)))
+                    .addComponent(sessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(labelClientes)
+                    .addComponent(labelFicheiros))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 628, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(labelConfiguracoes)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(labelServidor)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(serverField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(labelPastaPartilhada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelPasta)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel3))
-                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                    .addComponent(labelPorta)
+                    .addComponent(selectFolderButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(labelUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(sessionButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void usernameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_usernameFieldActionPerformed
+
+    private void selectFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectFolderButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_selectFolderButtonActionPerformed
+
+    private void serverFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_serverFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -138,13 +235,24 @@ public class App extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JList<String> clientsList;
+    private javax.swing.JTree filesTree;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel labelClientes;
+    private javax.swing.JLabel labelConfiguracoes;
+    private javax.swing.JLabel labelFicheiros;
+    private javax.swing.JLabel labelPasta;
+    private javax.swing.JLabel labelPastaPartilhada;
+    private javax.swing.JLabel labelPorta;
+    private javax.swing.JLabel labelServidor;
+    private javax.swing.JLabel labelUsername;
+    private javax.swing.JTextField portField;
+    private javax.swing.JButton selectFolderButton;
+    private javax.swing.JTextField serverField;
+    private javax.swing.JButton sessionButton;
+    private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 }
