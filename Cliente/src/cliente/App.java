@@ -1,9 +1,12 @@
 package cliente;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileSystemView;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -12,6 +15,8 @@ import javax.ws.rs.core.Response;
 
 /// Referencias
 /// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
+/// Seletor de ficheiros -> https://www.rgagnon.com/javadetails/java-0370.html
+
 
 
 public class App extends javax.swing.JFrame {
@@ -85,6 +90,7 @@ public class App extends javax.swing.JFrame {
         labelPastaPartilhada.setText("Pasta Partilhada");
 
         sessionButton.setText("Login");
+        sessionButton.setEnabled(false);
         sessionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sessionButtonActionPerformed(evt);
@@ -171,7 +177,17 @@ public class App extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void selectFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectFolderButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Selecione uma pasta para partilhar");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
 
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            sharedFolder = chooser.getSelectedFile();
+            labelPasta.setText(sharedFolder.toString());
+
+            sessionButton.setEnabled(true);
+        }
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
     private void sessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sessionButtonActionPerformed
@@ -281,4 +297,5 @@ public class App extends javax.swing.JFrame {
 
     private String baseURL;
     private String username;
+    private File sharedFolder;
 }
