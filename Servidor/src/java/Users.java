@@ -1,8 +1,11 @@
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.stream.Collectors;
 /// Referencias
 /// Stream -> https://www.geeksforgeeks.org/stream-in-java/
 /// Stream Filter -> https://www.baeldung.com/find-list-element-java#5-java-8-stream-api
+/// Stream Map -> https://www.geeksforgeeks.org/stream-map-java-examples/
 
 @Path("/users")
 public class Users {
@@ -65,5 +69,24 @@ public class Users {
         users.add(newUser);
 
         return new MessageResponse("Utilizador adicionado com sucesso").response();
+    }
+
+    @DELETE
+    @Path("logout/{username}")
+    @Produces("application/json")
+    public Response logout(@PathParam("username") String username) {
+        if (username.trim().isEmpty()) {
+            return new MessageResponse(400, "Username inválido").response();
+        }
+
+        User user = getUser(username);
+
+        if (user == null) {
+            return new MessageResponse(404, "Username não encontrado").response();
+        }
+
+        users.remove(user);
+
+        return new MessageResponse("Logout feito com sucesso").response();
     }
 }
