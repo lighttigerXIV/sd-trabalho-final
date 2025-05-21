@@ -3,7 +3,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -58,13 +57,19 @@ public class Users {
             return new MessageResponse(400, "É necessário enviar um 'username'").response();
         }
 
+        String sharedFolder = body.getSharedFolder();
+
+        if (sharedFolder == null || sharedFolder.trim().equals("")) {
+            return new MessageResponse(400, "É necessário enviar o 'sharedFolder' com o caminho da pasta partilhada").response();
+        }
+
         User user = getUser(username);
 
         if (user != null) {
             return new MessageResponse(409, "Já existe um utilizador com o mesmo username").response();
         }
 
-        User newUser = new User(username);
+        User newUser = new User(username, sharedFolder);
 
         users.add(newUser);
 
