@@ -180,7 +180,6 @@ public class App extends javax.swing.JFrame {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Selecione uma pasta para partilhar");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             sharedFolder = chooser.getSelectedFile();
