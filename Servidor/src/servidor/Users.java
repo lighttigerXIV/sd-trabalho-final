@@ -1,6 +1,7 @@
 package servidor;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Users {
 
@@ -17,8 +18,15 @@ public class Users {
                 .orElse(null);
     }
 
-    public boolean login() {
+    public Map<Boolean, String> login(String username, String sharedPath) {
+        User user = getUser(username);
 
-        return true;
+        if (user != null) {
+            return Map.of(false, "Utilizador ja existe");
+        }
+
+        users.add(new User(username, sharedPath));
+
+        return Map.of(true, "Utilizador adicionado com sucesso");
     }
 }

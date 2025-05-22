@@ -11,13 +11,15 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import rmi.ServerInterface;
+import java.rmi.*;
+import java.rmi.registry.*;
+import java.util.Map;
 
 /// Referencias
 /// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
@@ -86,7 +88,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        serverField.setText("http://localhost:8080/Servidor/api");
+        serverField.setText("192.168.0.103");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Servidor");
@@ -164,9 +166,8 @@ public class App extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelConfiguracoes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -221,53 +222,21 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
     private void sessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sessionButtonActionPerformed
-        baseURL = serverField.getText();
-        username = usernameField.getText();
+        try {
+            baseURL = serverField.getText();
+            username = usernameField.getText();
 
-        Client client = ClientBuilder.newClient();
+            Registry registry = LocateRegistry.getRegistry(baseURL, 1099);
+            serverInterface = (ServerInterface) registry.lookup("projeto-sd");
 
-        Response loginResponse = client.target(baseURL + "/users/login")
-                .request()
-                .accept("application/json")
-                .post(Entity.json(new LoginBody(username)));
+            Map<Boolean, String> login = serverInterface.login(username, sharedFolder.getAbsolutePath());
 
-        int code = loginResponse.getStatus();
+            System.out.println(login.get(true));
+            System.out.println(login.get(false));
 
-        if (code == 409) {
-            JOptionPane.showMessageDialog(this,
-                    "Utilizador já existe na sessão",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
 
-            return;
         }
-
-        Response response = client.target(baseURL + "/users")
-                .request()
-                .accept("application/json")
-                .get();
-
-        code = response.getStatus();
-
-        System.out.println("code: " + code);
-
-        if (code != 200) {
-            return;
-        }
-
-        List<String> usernames = response.readEntity(new GenericType<List<String>>() {
-        });
-
-        DefaultListModel<String> usersList = new DefaultListModel<>();
-
-        for (String name : usernames) {
-            if (!name.trim().toLowerCase().equals(username.trim().toLowerCase())) {
-                usersList.addElement(name);
-            }
-        }
-
-        clientsList.setModel(usersList);
-
     }//GEN-LAST:event_sessionButtonActionPerformed
 
     /**
@@ -330,6 +299,7 @@ public class App extends javax.swing.JFrame {
     private String baseURL;
     private String username;
     private File sharedFolder;
+    private ServerInterface serverInterface;
 
     private static void listAllFiles(Path currentPath, List<Path> allFiles)
             throws IOException {

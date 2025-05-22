@@ -1,32 +1,42 @@
 package servidor;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetAddress;
+import java.rmi.server.*;
+import java.rmi.*;
+import java.rmi.registry.*;
+import java.util.Map;
+import rmi.ServerInterface;
 
-public class Servidor {
+public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
-    Users users = new Users();
-    Logs logs = new Logs();
+    Users users;
+    Logs logs;
+
+    public Servidor() throws RemoteException {
+        super();
+
+        users = new Users();
+        logs = new Logs();
+    }
 
     public static void main(String[] args) {
 
         try {
+            Servidor server = new Servidor();
+            Registry reg = LocateRegistry.createRegistry(1099);
 
-            ServerSocket serversocket = new ServerSocket(13);
+            reg.rebind("projeto-sd", server);
 
-            while (true) {
-                Socket socket = serversocket.accept();
-                System.out.println("Remoto: " + socket.getInetAddress().getHostAddress() + " Port: " + socket.getPort());
-                System.out.println("Local : " + socket.getLocalAddress().getHostAddress() + " Port: " + socket.getLocalPort());
-                DataInputStream input = new DataInputStream(socket.getInputStream());
-                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-            }
-
+            System.out.println("IP: " + InetAddress.getLocalHost().getHostAddress());
+            System.out.println("Porta: 1099");
         } catch (Exception e) {
         }
 
+    }
+
+    @Override
+    public Map<Boolean, String> login(String username, String sharedPath) throws RemoteException {
+        return users.login(username, sharedPath);
     }
 
 }
