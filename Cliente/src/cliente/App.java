@@ -1,11 +1,18 @@
 package cliente;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -15,6 +22,8 @@ import javax.ws.rs.core.Response;
 /// Referencias
 /// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
 /// Seletor de ficheiros -> https://www.rgagnon.com/javadetails/java-0370.html
+/// Listagem de ficheiros -> https://www.geeksforgeeks.org/list-all-files-from-a-directory-recursively-in-java/
+
 
 
 
@@ -59,6 +68,8 @@ public class App extends javax.swing.JFrame {
         labelPastaPartilhada = new javax.swing.JLabel();
         sessionButton = new javax.swing.JButton();
         selectFolderButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        labelFicheiros1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
@@ -103,6 +114,8 @@ public class App extends javax.swing.JFrame {
             }
         });
 
+        labelFicheiros1.setText("Logs");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,15 +123,6 @@ public class App extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelConfiguracoes)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelClientes))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelFicheiros)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelServidor)
@@ -131,9 +135,23 @@ public class App extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(labelPastaPartilhada)
                                 .addComponent(labelPasta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(selectFolderButton))
-                        .addGap(362, 362, 362)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(selectFolderButton)))
+                    .addComponent(labelConfiguracoes)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelClientes))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelFicheiros)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 816, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(labelFicheiros1)
+                        .addGap(0, 308, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,11 +159,14 @@ public class App extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelClientes)
-                    .addComponent(labelFicheiros))
+                    .addComponent(labelFicheiros)
+                    .addComponent(labelFicheiros1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(labelConfiguracoes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -185,6 +206,17 @@ public class App extends javax.swing.JFrame {
             labelPasta.setText(sharedFolder.toString());
 
             sessionButton.setEnabled(true);
+
+            try {
+                Path rootPath = sharedFolder.toPath();
+
+                List<Path> allFiles = new ArrayList<>();
+                listAllFiles(rootPath, allFiles);
+
+                System.out.println("Found files:");
+                allFiles.forEach(System.out::println);
+            } catch (Exception e) {
+            }
         }
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
@@ -276,6 +308,7 @@ public class App extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> clientsList;
     private javax.swing.JTree filesTree;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator2;
@@ -283,6 +316,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel labelClientes;
     private javax.swing.JLabel labelConfiguracoes;
     private javax.swing.JLabel labelFicheiros;
+    private javax.swing.JLabel labelFicheiros1;
     private javax.swing.JLabel labelPasta;
     private javax.swing.JLabel labelPastaPartilhada;
     private javax.swing.JLabel labelServidor;
@@ -296,4 +330,17 @@ public class App extends javax.swing.JFrame {
     private String baseURL;
     private String username;
     private File sharedFolder;
+
+    private static void listAllFiles(Path currentPath, List<Path> allFiles)
+            throws IOException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentPath)) {
+            for (Path entry : stream) {
+                if (Files.isDirectory(entry)) {
+                    listAllFiles(entry, allFiles);
+                } else {
+                    allFiles.add(entry);
+                }
+            }
+        }
+    }
 }
