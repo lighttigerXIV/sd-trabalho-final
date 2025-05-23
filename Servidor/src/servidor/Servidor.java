@@ -32,13 +32,14 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
             System.out.println("IP: " + InetAddress.getLocalHost().getHostAddress());
             System.out.println("Porta: 1099");
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public Result login(String username, String sharedPath) throws RemoteException {
-        return users.login(username, sharedPath);
+    public Result login(String username, String sharedPath, List<String> files) throws RemoteException {
+        return users.login(username, sharedPath, files);
     }
 
     @Override

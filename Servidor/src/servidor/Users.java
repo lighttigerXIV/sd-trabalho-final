@@ -2,6 +2,7 @@ package servidor;
 
 import rmi.User;
 import java.util.ArrayList;
+import java.util.List;
 import rmi.Result;
 
 public class Users {
@@ -23,14 +24,14 @@ public class Users {
         return users;
     }
 
-    public Result login(String username, String sharedPath) {
+    public Result login(String username, String sharedPath, List<String> files) {
         User user = getUser(username);
 
         if (user != null) {
             return new Result(false, "Utilizador já existe");
         }
 
-        users.add(new User(username, sharedPath));
+        users.add(new User(username, sharedPath, files));
 
         return new Result(true, "Utilizador adicionado com sucesso");
     }
