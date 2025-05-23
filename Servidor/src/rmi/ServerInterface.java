@@ -1,9 +1,11 @@
 package rmi;
 
 import java.rmi.*;
-import java.util.Map;
+import java.util.List;
 
 public interface ServerInterface extends Remote {
 
-    Map<Boolean, String> login(String username, String sharedPath) throws RemoteException;
+    Result login(String username, String sharedPath) throws RemoteException;
+
+    List<User> getUsers() throws RemoteException;
 }

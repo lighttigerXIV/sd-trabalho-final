@@ -1,7 +1,8 @@
 package servidor;
 
+import rmi.User;
 import java.util.ArrayList;
-import java.util.Map;
+import rmi.Result;
 
 public class Users {
 
@@ -18,15 +19,19 @@ public class Users {
                 .orElse(null);
     }
 
-    public Map<Boolean, String> login(String username, String sharedPath) {
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public Result login(String username, String sharedPath) {
         User user = getUser(username);
 
         if (user != null) {
-            return Map.of(false, "Utilizador ja existe");
+            return new Result(false, "Utilizador já existe");
         }
 
         users.add(new User(username, sharedPath));
 
-        return Map.of(true, "Utilizador adicionado com sucesso");
+        return new Result(true, "Utilizador adicionado com sucesso");
     }
 }

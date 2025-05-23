@@ -1,5 +1,6 @@
 package cliente;
 
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,18 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import rmi.ServerInterface;
 import java.rmi.*;
 import java.rmi.registry.*;
-import java.util.Map;
+import javax.swing.DefaultListModel;
+import rmi.Result;
+import rmi.User;
 
 /// Referencias
 /// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
@@ -62,7 +59,7 @@ public class App extends javax.swing.JFrame {
         clientsList = new javax.swing.JList<>();
         labelConfiguracoes = new javax.swing.JLabel();
         labelFicheiros = new javax.swing.JLabel();
-        serverField = new javax.swing.JTextField();
+        ipField = new javax.swing.JTextField();
         labelServidor = new javax.swing.JLabel();
         labelUsername = new javax.swing.JLabel();
         usernameField = new javax.swing.JTextField();
@@ -90,7 +87,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        serverField.setText("192.168.0.103");
+        ipField.setText("192.168.0.103");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
@@ -143,7 +140,7 @@ public class App extends javax.swing.JFrame {
                             .addComponent(sessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(serverField, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ipField, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(labelServidor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,7 +195,7 @@ public class App extends javax.swing.JFrame {
                             .addComponent(labelServidor1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(serverField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ipField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(portField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(labelPastaPartilhada)
@@ -240,26 +237,47 @@ public class App extends javax.swing.JFrame {
 
                 System.out.println("Found files:");
                 allFiles.forEach(System.out::println);
-            } catch (Exception e) {
+            } catch (IOException e) {
+                System.out.println(e);
             }
         }
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
     private void sessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sessionButtonActionPerformed
         try {
-            baseURL = serverField.getText();
+            ip = ipField.getText();
             username = usernameField.getText();
 
-            Registry registry = LocateRegistry.getRegistry(baseURL, 1099);
+            Registry registry = LocateRegistry.getRegistry(ip, 1099);
             serverInterface = (ServerInterface) registry.lookup("projeto-sd");
 
-            Map<Boolean, String> login = serverInterface.login(username, sharedFolder.getAbsolutePath());
+            Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath());
 
-            System.out.println(login.get(true));
-            System.out.println(login.get(false));
+            if (!loginResult.getSuccess()) {
+                JOptionPane.showMessageDialog(this,
+                        loginResult.getMessage(),
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
 
-        } catch (Exception e) {
+                return;
+            }
 
+            users = serverInterface.getUsers();
+
+            DefaultListModel<String> listModel = new DefaultListModel<>();
+
+            users.forEach(user -> {
+                if (!user.getUserName().equals(username)) {
+                    listModel.addElement(user.getUserName());
+                }
+            });
+
+            clientsList.setModel(listModel);
+
+            sessionButton.setText("Logout");
+
+        } catch (HeadlessException | NotBoundException | RemoteException e) {
+            System.out.println(e);
         }
     }//GEN-LAST:event_sessionButtonActionPerformed
 
@@ -305,6 +323,7 @@ public class App extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> clientsList;
     private javax.swing.JTree filesTree;
+    private javax.swing.JTextField ipField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -321,15 +340,15 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel labelUsername;
     private javax.swing.JTextField portField;
     private javax.swing.JButton selectFolderButton;
-    private javax.swing.JTextField serverField;
     private javax.swing.JButton sessionButton;
     private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 
-    private String baseURL;
+    private String ip;
     private String username;
     private File sharedFolder;
     private ServerInterface serverInterface;
+    private List<User> users;
 
     private static void listAllFiles(Path currentPath, List<Path> allFiles)
             throws IOException {

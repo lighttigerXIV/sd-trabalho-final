@@ -1,6 +1,8 @@
-package servidor;
+package rmi;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     String userName;
     String sharedPath;

@@ -4,8 +4,10 @@ import java.net.InetAddress;
 import java.rmi.server.*;
 import java.rmi.*;
 import java.rmi.registry.*;
-import java.util.Map;
+import java.util.List;
+import rmi.Result;
 import rmi.ServerInterface;
+import rmi.User;
 
 public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
@@ -35,8 +37,13 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public Map<Boolean, String> login(String username, String sharedPath) throws RemoteException {
+    public Result login(String username, String sharedPath) throws RemoteException {
         return users.login(username, sharedPath);
+    }
+
+    @Override
+    public List<User> getUsers() throws RemoteException {
+        return users.getUsers();
     }
 
 }
