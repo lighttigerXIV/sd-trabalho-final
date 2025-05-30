@@ -2,6 +2,9 @@ package cliente;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -32,10 +35,31 @@ public class App extends javax.swing.JFrame {
     private File sharedFolder;
     private ServerInterface serverInterface;
     private List<User> users;
-    private Thread logsThread;
+    private LogsThread logsThread;
+    private boolean loggedIn = false;
 
     public App() {
         initComponents();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Call your function or logic to decide whether to close
+                try {
+                    Result result = serverInterface.logout(username);
+                    loggedIn = false;
+                    logsThread.kill();
+                    username = null;
+                    sessionButton.setText("Login");
+                    selectFolderButton.setEnabled(true);
+                    ipField.setEnabled(true);
+                    portField.setEnabled(true);
+                    usernameField.setEnabled(true);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
 
         try {
             String hostname = InetAddress.getLocalHost().getHostName();
@@ -122,7 +146,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        ipField.setText("192.168.84.80");
+        ipField.setText("192.168.18.59");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
@@ -227,9 +251,8 @@ public class App extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane3)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE))
                 .addGap(16, 16, 16)
                 .addComponent(labelConfiguracoes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -278,47 +301,68 @@ public class App extends javax.swing.JFrame {
 
     private void sessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sessionButtonActionPerformed
         try {
-            ip = ipField.getText();
-            username = usernameField.getText();
 
-            Registry registry = LocateRegistry.getRegistry(ip, 1099);
-            serverInterface = (ServerInterface) registry.lookup("projeto-sd");
+            if (loggedIn == false) {
 
-            List<String> files = new ArrayList<>();
+                ip = ipField.getText();
+                username = usernameField.getText();
 
-            Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
-                if (new File(path.toString()).isFile()) {
-                    files.add(path.toString());
+                Registry registry = LocateRegistry.getRegistry(ip, 1099);
+                serverInterface = (ServerInterface) registry.lookup("projeto-sd");
+
+                List<String> files = new ArrayList<>();
+
+                Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
+                    if (new File(path.toString()).isFile()) {
+                        files.add(path.toString());
+                    }
+                });
+
+                Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
+
+                if (!loginResult.getSuccess()) {
+                    JOptionPane.showMessageDialog(this,
+                            loginResult.getMessage(),
+                            "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    return;
                 }
-            });
 
-            Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
+                users = serverInterface.getUsers();
 
-            if (!loginResult.getSuccess()) {
-                JOptionPane.showMessageDialog(this,
-                        loginResult.getMessage(),
-                        "Erro",
-                        JOptionPane.ERROR_MESSAGE);
+                DefaultListModel<String> listModel = new DefaultListModel<>();
 
-                return;
+                users.forEach(user -> {
+                    if (!user.getUserName().equals(username)) {
+                        listModel.addElement(user.getUserName());
+                    }
+                });
+
+                clientsList.setModel(listModel);
+
+                sessionButton.setText("Logout");
+                selectFolderButton.setEnabled(false);
+                ipField.setEnabled(false);
+                portField.setEnabled(false);
+                usernameField.setEnabled(false);
+                loggedIn = true;
+
+                logsThread = new LogsThread(serverInterface, username, logsList);
+                Thread thread = new Thread(logsThread);
+                thread.start();
+
+            } else {
+                Result result = serverInterface.logout(username);
+                loggedIn = false;
+                logsThread.kill();
+                username = null;
+                sessionButton.setText("Login");
+                selectFolderButton.setEnabled(true);
+                ipField.setEnabled(true);
+                portField.setEnabled(true);
+                usernameField.setEnabled(true);
             }
-
-            users = serverInterface.getUsers();
-
-            DefaultListModel<String> listModel = new DefaultListModel<>();
-
-            users.forEach(user -> {
-                if (!user.getUserName().equals(username)) {
-                    listModel.addElement(user.getUserName());
-                }
-            });
-
-            clientsList.setModel(listModel);
-
-            sessionButton.setText("Logout");
-
-            logsThread = new Thread(new LogsThread(serverInterface, username, logsList));
-            logsThread.start();
 
         } catch (Exception e) {
             e.printStackTrace();

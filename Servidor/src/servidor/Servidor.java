@@ -77,4 +77,16 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
         return userlogs;
     }
 
+    @Override
+    public Result logout(String username) throws RemoteException {
+
+        Result result = users.logout(username);
+
+        if (result.getSuccess()) {
+            logs.addLog(username + " Terminou a Sessao");
+        }
+        return result;
+
+    }
+
 }

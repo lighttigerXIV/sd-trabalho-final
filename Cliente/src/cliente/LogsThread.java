@@ -12,6 +12,7 @@ public class LogsThread implements Runnable {
     private ServerInterface serverInterface;
     private String username;
     private JList logsList;
+    private boolean run = true;
 
     public LogsThread(ServerInterface serverInterface, String username, JList logsList) {
         this.serverInterface = serverInterface;
@@ -19,9 +20,15 @@ public class LogsThread implements Runnable {
         this.logsList = logsList;
     }
 
+    public void kill() {
+
+        run = false;
+
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (run) {
             try {
                 TimeUnit.SECONDS.sleep(1);
 
@@ -33,6 +40,7 @@ public class LogsThread implements Runnable {
                 });
 
                 logsList.setModel(model);
+                System.out.println("batata");
             } catch (Exception e) {
                 System.out.println(e);
             }

@@ -35,4 +35,13 @@ public class Users {
 
         return new Result(true, "Utilizador adicionado com sucesso");
     }
+
+    public Result logout(String username) {
+        User user = getUser(username);
+
+        //to do: verificar se esta a transferir um ficheiro (result(false))
+        users.remove(user);
+
+        return new Result(true, "Saiu da Aplicação");
+    }
 }
