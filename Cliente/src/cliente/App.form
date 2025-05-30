@@ -195,7 +195,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="ipField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="192.168.3.80"/>
+        <Property name="text" type="java.lang.String" value="192.168.0.103"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="labelServidor">

@@ -69,7 +69,7 @@ public class App extends javax.swing.JFrame {
             filesList.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("GENGAR");
+                    System.out.println(e.getClickCount());
                 }
             });
 
@@ -123,7 +123,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        ipField.setText("192.168.3.80");
+        ipField.setText("192.168.0.103");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
@@ -287,7 +287,9 @@ public class App extends javax.swing.JFrame {
             List<String> files = new ArrayList<>();
 
             Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
-                files.add(path.toString());
+                if (new File(path.toString()).isFile()) {
+                    files.add(path.toString());
+                }
             });
 
             Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
