@@ -33,9 +33,12 @@ import rmi.User;
 
 public class App extends javax.swing.JFrame {
 
-    /**
-     * Creates new form App
-     */
+    private String ip;
+    private String username;
+    private File sharedFolder;
+    private ServerInterface serverInterface;
+    private List<User> users;
+
     public App() {
         initComponents();
 
@@ -385,9 +388,4 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 
-    private String ip;
-    private String username;
-    private File sharedFolder;
-    private ServerInterface serverInterface;
-    private List<User> users;
 }

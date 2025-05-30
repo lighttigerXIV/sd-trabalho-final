@@ -7,12 +7,14 @@ public class User implements Serializable {
 
     String userName;
     String sharedPath;
+    Long loginTimestamp;
     List<String> files;
 
     public User(String userName, String sharedPath, List<String> files) {
         this.userName = userName;
         this.sharedPath = sharedPath;
         this.files = files;
+        this.loginTimestamp = System.currentTimeMillis() / 1000;
     }
 
     public String getUserName() {
@@ -37,6 +39,10 @@ public class User implements Serializable {
 
     public void setFiles(List<String> files) {
         this.files = files;
+    }
+
+    public Long getLoginTimestamp() {
+        return loginTimestamp;
     }
 
 }

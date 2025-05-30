@@ -13,7 +13,7 @@ public class Users {
         this.users = new ArrayList<>();
     }
 
-    private User getUser(String username) {
+    public User getUser(String username) {
         return users.stream()
                 .filter(user -> user.getUserName().toLowerCase().equals(username.toLowerCase()))
                 .findFirst()
