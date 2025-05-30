@@ -42,7 +42,7 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     @Override
     public Result login(String username, String sharedPath, List<String> files) throws RemoteException {
 
-        Result result = login(username, sharedPath, files);
+        Result result = users.login(username, sharedPath, files);
 
         if (result.getSuccess()) {
             logs.addLog(username + " fez Login!");

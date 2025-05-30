@@ -1,25 +1,19 @@
 package cliente;
 
-import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import rmi.ServerInterface;
-import java.rmi.*;
 import java.rmi.registry.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import rmi.Result;
 import rmi.User;
 
@@ -38,6 +32,7 @@ public class App extends javax.swing.JFrame {
     private File sharedFolder;
     private ServerInterface serverInterface;
     private List<User> users;
+    private Thread logsThread;
 
     public App() {
         initComponents();
@@ -105,12 +100,13 @@ public class App extends javax.swing.JFrame {
         labelPastaPartilhada = new javax.swing.JLabel();
         sessionButton = new javax.swing.JButton();
         selectFolderButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
         labelFicheiros1 = new javax.swing.JLabel();
         labelServidor1 = new javax.swing.JLabel();
         portField = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         filesList = new javax.swing.JList<>();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        logsList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
@@ -126,7 +122,7 @@ public class App extends javax.swing.JFrame {
 
         labelFicheiros.setText("Ficheiros");
 
-        ipField.setText("192.168.0.103");
+        ipField.setText("192.168.84.80");
 
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
@@ -167,6 +163,8 @@ public class App extends javax.swing.JFrame {
         });
 
         jScrollPane2.setViewportView(filesList);
+
+        jScrollPane4.setViewportView(logsList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -214,11 +212,9 @@ public class App extends javax.swing.JFrame {
                                 .addComponent(selectFolderButton))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelFicheiros1)
-                        .addGap(0, 422, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(labelFicheiros1)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 453, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,9 +226,10 @@ public class App extends javax.swing.JFrame {
                     .addComponent(labelFicheiros1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane3)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)))
                 .addGap(16, 16, 16)
                 .addComponent(labelConfiguracoes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,8 +317,11 @@ public class App extends javax.swing.JFrame {
 
             sessionButton.setText("Logout");
 
+            logsThread = new Thread(new LogsThread(serverInterface, username, logsList));
+            logsThread.start();
+
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }//GEN-LAST:event_sessionButtonActionPerformed
 
@@ -368,9 +368,9 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JList<String> clientsList;
     private javax.swing.JList<String> filesList;
     private javax.swing.JTextField ipField;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel labelClientes;
@@ -382,6 +382,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel labelServidor;
     private javax.swing.JLabel labelServidor1;
     private javax.swing.JLabel labelUsername;
+    private javax.swing.JList<String> logsList;
     private javax.swing.JTextField portField;
     private javax.swing.JButton selectFolderButton;
     private javax.swing.JButton sessionButton;
