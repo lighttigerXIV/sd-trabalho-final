@@ -343,9 +343,9 @@ public class App extends javax.swing.JFrame {
                 DefaultListModel<String> listModel = new DefaultListModel<>();
 
                 users.forEach(user -> {
-                    if (!user.getUserName().equals(username)) {
-                        listModel.addElement(user.getUserName());
-                    }
+
+                    listModel.addElement(user.getUserName());
+
                 });
 
                 clientsList.setModel(listModel);
