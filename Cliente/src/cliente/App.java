@@ -33,8 +33,8 @@ public class App extends javax.swing.JFrame {
     private String username;
     private File sharedFolder;
     private ServerInterface serverInterface;
-    private List<User> users;
     private LogsThread logsThread;
+    private UsersThread usersThread;
     private boolean loggedIn = false;
     private String selectedUsername = "";
 
@@ -49,13 +49,10 @@ public class App extends javax.swing.JFrame {
                     Result result = serverInterface.logout(username);
                     loggedIn = false;
                     logsThread.kill();
+                    usersThread.kill();
                     username = null;
-                    sessionButton.setText("Login");
-                    selectFolderButton.setEnabled(true);
-                    ipField.setEnabled(true);
-                    portField.setEnabled(true);
-                    usernameField.setEnabled(true);
-                    refreshFilesButton.setEnabled(true);
+
+                    toggleElements();
 
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -68,26 +65,31 @@ public class App extends javax.swing.JFrame {
             usernameField.setText(hostname);
 
             clientsList.addListSelectionListener((ListSelectionEvent e) -> {
-                if (!e.getValueIsAdjusting()) {
-                    JList<String> list = (JList<String>) e.getSource();
-                    selectedUsername = list.getSelectedValue();
+                try {
+                    if (!e.getValueIsAdjusting()) {
+                        JList<String> list = (JList<String>) e.getSource();
+                        selectedUsername = list.getSelectedValue();
 
-                    for (User user : users) {
-                        if (user.getUserName().equals(selectedUsername)) {
+                        for (User user : serverInterface.getUsers()) {
+                            if (user.getUserName().equals(selectedUsername)) {
 
-                            DefaultListModel<String> listModel = new DefaultListModel<>();
+                                DefaultListModel<String> listModel = new DefaultListModel<>();
 
-                            user.getFiles().forEach(path -> {
-                                File file = new File(path);
-                                listModel.addElement(file.getName());
-                            });
+                                user.getFiles().forEach(path -> {
+                                    File file = new File(path);
+                                    listModel.addElement(file.getName());
+                                });
 
-                            filesList.setModel(listModel);
+                                filesList.setModel(listModel);
 
-                            break;
+                                break;
+                            }
                         }
                     }
+                } catch (Exception ee) {
+                    ee.printStackTrace();
                 }
+
             });
 
             filesList.addMouseListener(new MouseAdapter() {
@@ -331,7 +333,7 @@ public class App extends javax.swing.JFrame {
                 ip = ipField.getText();
                 username = usernameField.getText();
 
-                boolean canConnect = InetAddress.getByName(ip).isReachable(2000);
+                boolean canConnect = InetAddress.getByName(ip).isReachable(400);
 
                 if (!canConnect) {
                     JOptionPane.showMessageDialog(this,
@@ -364,41 +366,25 @@ public class App extends javax.swing.JFrame {
                     return;
                 }
 
-                users = serverInterface.getUsers();
-
-                DefaultListModel<String> listModel = new DefaultListModel<>();
-
-                users.forEach(user -> {
-
-                    listModel.addElement(user.getUserName());
-
-                });
-
-                clientsList.setModel(listModel);
-
-                sessionButton.setText("Logout");
-                selectFolderButton.setEnabled(false);
-                ipField.setEnabled(false);
-                portField.setEnabled(false);
-                usernameField.setEnabled(false);
-                refreshFilesButton.setEnabled(true);
                 loggedIn = true;
+                toggleElements();
 
                 logsThread = new LogsThread(serverInterface, username, logsList);
-                Thread thread = new Thread(logsThread);
-                thread.start();
+                Thread lThread = new Thread(logsThread);
+                lThread.start();
+
+                usersThread = new UsersThread(serverInterface, clientsList);
+                Thread uThread = new Thread(usersThread);
+                uThread.start();
 
             } else {
                 serverInterface.logout(username);
                 loggedIn = false;
                 logsThread.kill();
+                usersThread.kill();
                 username = null;
-                sessionButton.setText("Login");
-                selectFolderButton.setEnabled(true);
-                ipField.setEnabled(true);
-                portField.setEnabled(true);
-                usernameField.setEnabled(true);
-                refreshFilesButton.setEnabled(false);
+
+                toggleElements();
             }
 
         } catch (Exception e) {
@@ -423,19 +409,9 @@ public class App extends javax.swing.JFrame {
 
             serverInterface.refreshFiles(username, files);
 
-            users = serverInterface.getUsers();
+            fetchUsers();
 
-            DefaultListModel<String> listModel = new DefaultListModel<>();
-
-            users.forEach(user -> {
-
-                listModel.addElement(user.getUserName());
-
-            });
-
-            clientsList.setModel(listModel);
-
-            for (User user : users) {
+            for (User user : serverInterface.getUsers()) {
                 if (user.getUserName().equals(selectedUsername)) {
 
                     DefaultListModel<String> filesModel = new DefaultListModel<>();
@@ -457,9 +433,6 @@ public class App extends javax.swing.JFrame {
 
     }//GEN-LAST:event_refreshFilesButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -490,6 +463,20 @@ public class App extends javax.swing.JFrame {
                 new App().setVisible(true);
             }
         });
+    }
+
+    private void toggleElements() {
+        selectFolderButton.setEnabled(!loggedIn);
+        ipField.setEnabled(!loggedIn);
+        portField.setEnabled(!loggedIn);
+        usernameField.setEnabled(!loggedIn);
+        refreshFilesButton.setEnabled(loggedIn);
+
+        sessionButton.setText(loggedIn ? "Terminar Sessão" : "Iniciar Sessão");
+    }
+
+    private void fetchUsers() {
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

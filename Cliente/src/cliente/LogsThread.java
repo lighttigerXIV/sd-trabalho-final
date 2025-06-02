@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.ListModel;
 import rmi.Log;
 import rmi.ServerInterface;
 
@@ -21,17 +22,14 @@ public class LogsThread implements Runnable {
     }
 
     public void kill() {
-
+        logsList.setModel(new DefaultListModel<>());
         run = false;
-
     }
 
     @Override
     public void run() {
-        while (run) {
+        do {
             try {
-                TimeUnit.SECONDS.sleep(1);
-
                 List<Log> logs = serverInterface.getLogs(username);
                 DefaultListModel<String> model = new DefaultListModel<>();
 
@@ -40,10 +38,12 @@ public class LogsThread implements Runnable {
                 });
 
                 logsList.setModel(model);
+
+                TimeUnit.SECONDS.sleep(1);
             } catch (Exception e) {
                 System.out.println(e);
             }
-        }
+        } while (run);
     }
 
 }
