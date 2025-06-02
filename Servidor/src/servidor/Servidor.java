@@ -89,4 +89,18 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
     }
 
+    @Override
+    public void refreshFiles(String username, List<String> files) throws RemoteException {
+
+        User user = users.getUser(username);
+        int index = users.getUsers().indexOf(user);
+
+        user.setFiles(files);
+
+        ArrayList<User> newUsers = users.getUsers();
+
+        newUsers.set(index, user);
+        users.setUsers(newUsers);
+    }
+
 }

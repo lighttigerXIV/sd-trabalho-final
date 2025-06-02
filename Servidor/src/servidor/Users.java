@@ -20,6 +20,10 @@ public class Users {
                 .orElse(null);
     }
 
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
+    }
+
     public ArrayList<User> getUsers() {
         return users;
     }

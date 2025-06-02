@@ -37,6 +37,7 @@ public class App extends javax.swing.JFrame {
     private List<User> users;
     private LogsThread logsThread;
     private boolean loggedIn = false;
+    private String selectedUsername = "";
 
     public App() {
         initComponents();
@@ -68,7 +69,7 @@ public class App extends javax.swing.JFrame {
             clientsList.addListSelectionListener((ListSelectionEvent e) -> {
                 if (!e.getValueIsAdjusting()) {
                     JList<String> list = (JList<String>) e.getSource();
-                    String selectedUsername = list.getSelectedValue();
+                    selectedUsername = list.getSelectedValue();
 
                     for (User user : users) {
                         if (user.getUserName().equals(selectedUsername)) {
@@ -397,7 +398,50 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_portFieldActionPerformed
 
     private void refreshFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshFilesButtonActionPerformed
-        // TODO add your handling code here:
+
+        try {
+            List<String> files = new ArrayList<>();
+
+            Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
+                if (new File(path.toString()).isFile()) {
+                    files.add(path.toString());
+                }
+            });
+
+            serverInterface.refreshFiles(username, files);
+
+            users = serverInterface.getUsers();
+
+            DefaultListModel<String> listModel = new DefaultListModel<>();
+
+            users.forEach(user -> {
+
+                listModel.addElement(user.getUserName());
+
+            });
+
+            clientsList.setModel(listModel);
+
+            for (User user : users) {
+                if (user.getUserName().equals(selectedUsername)) {
+
+                    DefaultListModel<String> filesModel = new DefaultListModel<>();
+
+                    user.getFiles().forEach(path -> {
+                        File file = new File(path);
+                        filesModel.addElement(file.getName());
+                    });
+
+                    filesList.setModel(filesModel);
+
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_refreshFilesButtonActionPerformed
 
     /**

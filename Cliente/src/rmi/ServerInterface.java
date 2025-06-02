@@ -12,4 +12,6 @@ public interface ServerInterface extends Remote {
     List<User> getUsers() throws RemoteException;
 
     List<Log> getLogs(String username) throws RemoteException;
+
+    void refreshFiles(String username, List<String> files) throws RemoteException;
 }
