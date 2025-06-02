@@ -25,10 +25,17 @@ public class UsersThread implements Runnable {
         run = false;
     }
 
+    public List<User> getUsers() {
+        return users;
+    }
+
     @Override
     public void run() {
         do {
             try {
+                int selectedIndex = clientsList.getSelectedIndex();
+                String selectedUsername = users.get(selectedIndex).getUserName();
+
                 users = serverInterface.getUsers();
 
                 DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -40,6 +47,10 @@ public class UsersThread implements Runnable {
                 });
 
                 clientsList.setModel(listModel);
+                User user = users.stream().filter(u -> u.getUserName().equals(selectedUsername)).findFirst().orElse(null);
+
+                int userIndex = users.indexOf(user);
+                clientsList.setSelectedIndex(userIndex);
 
                 TimeUnit.SECONDS.sleep(5);
             } catch (Exception e) {

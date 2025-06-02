@@ -35,6 +35,7 @@ public class App extends javax.swing.JFrame {
     private ServerInterface serverInterface;
     private LogsThread logsThread;
     private UsersThread usersThread;
+    private FilesThread filesThread;
     private boolean loggedIn = false;
     private String selectedUsername = "";
 
@@ -377,11 +378,16 @@ public class App extends javax.swing.JFrame {
                 Thread uThread = new Thread(usersThread);
                 uThread.start();
 
+                filesThread = new FilesThread(filesList, serverInterface, username, sharedFolder);
+                Thread fThread = new Thread(filesThread);
+                fThread.start();
+
             } else {
                 serverInterface.logout(username);
                 loggedIn = false;
                 logsThread.kill();
                 usersThread.kill();
+                filesThread.kill();
                 username = null;
 
                 toggleElements();
@@ -399,15 +405,8 @@ public class App extends javax.swing.JFrame {
     private void refreshFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshFilesButtonActionPerformed
 
         try {
-            List<String> files = new ArrayList<>();
 
-            Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
-                if (new File(path.toString()).isFile()) {
-                    files.add(path.toString());
-                }
-            });
-
-            serverInterface.refreshFiles(username, files);
+            filesThread.refreshFiles();
 
             fetchUsers();
 
