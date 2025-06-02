@@ -28,7 +28,7 @@ public class Log implements Serializable {
     public String toString() {
         Instant instant = Instant.ofEpochSecond(timestamp);
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         String formattedDateTime = localDateTime.format(formatter);
 
         return String.format("%s %s", formattedDateTime, message);
