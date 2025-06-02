@@ -131,6 +131,7 @@ public class App extends javax.swing.JFrame {
         logsList = new javax.swing.JList<>();
         labelUsername1 = new javax.swing.JLabel();
         labelUsername2 = new javax.swing.JLabel();
+        refreshFilesButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
@@ -260,6 +261,13 @@ public class App extends javax.swing.JFrame {
         labelUsername2.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelUsername2.setText("Utilizadores");
 
+        refreshFilesButton.setText("Atualizar Ficheiros");
+        refreshFilesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshFilesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -272,9 +280,13 @@ public class App extends javax.swing.JFrame {
                     .addComponent(labelUsername2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelUsername1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelUsername1)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(refreshFilesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,10 +297,12 @@ public class App extends javax.swing.JFrame {
                     .addComponent(labelUsername2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane3)
-                        .addContainerGap())))
+                    .addComponent(jScrollPane3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(refreshFilesButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2)))
+                .addContainerGap())
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -382,6 +396,10 @@ public class App extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_portFieldActionPerformed
 
+    private void refreshFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshFilesButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_refreshFilesButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -437,6 +455,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel labelUsername2;
     private javax.swing.JList<String> logsList;
     private javax.swing.JTextField portField;
+    private javax.swing.JButton refreshFilesButton;
     private javax.swing.JButton selectFolderButton;
     private javax.swing.JButton sessionButton;
     private javax.swing.JTextField usernameField;
