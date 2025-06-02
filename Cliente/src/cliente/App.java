@@ -137,6 +137,7 @@ public class App extends javax.swing.JFrame {
         labelUsername1 = new javax.swing.JLabel();
         labelUsername2 = new javax.swing.JLabel();
         refreshFilesButton = new javax.swing.JButton();
+        downloadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
@@ -265,13 +266,16 @@ public class App extends javax.swing.JFrame {
         labelUsername2.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelUsername2.setText("Utilizadores");
 
-        refreshFilesButton.setText("Atualizar Ficheiros");
+        refreshFilesButton.setText("Atualizar");
         refreshFilesButton.setEnabled(false);
         refreshFilesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshFilesButtonActionPerformed(evt);
             }
         });
+
+        downloadButton.setText("Transferir ");
+        downloadButton.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -286,12 +290,12 @@ public class App extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelUsername1)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(refreshFilesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(refreshFilesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelUsername1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -304,7 +308,9 @@ public class App extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(refreshFilesButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(refreshFilesButton)
+                            .addComponent(downloadButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2)))
                 .addContainerGap())
@@ -470,6 +476,7 @@ public class App extends javax.swing.JFrame {
         portField.setEnabled(!loggedIn);
         usernameField.setEnabled(!loggedIn);
         refreshFilesButton.setEnabled(loggedIn);
+        downloadButton.setEnabled(loggedIn);
 
         sessionButton.setText(loggedIn ? "Terminar Sessão" : "Iniciar Sessão");
     }
@@ -480,6 +487,7 @@ public class App extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> clientsList;
+    private javax.swing.JButton downloadButton;
     private javax.swing.JList<String> filesList;
     private javax.swing.JTextField ipField;
     private javax.swing.JPanel jPanel1;

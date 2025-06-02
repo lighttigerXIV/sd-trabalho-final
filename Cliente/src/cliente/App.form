@@ -38,15 +38,14 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="labelUsername1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" alignment="0" min="-2" pref="723" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="refreshFilesButton" min="-2" pref="360" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="downloadButton" min="-2" pref="357" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="refreshFilesButton" max="32767" attributes="0"/>
+                  <Component id="labelUsername1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" min="-2" pref="723" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -62,7 +61,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane3" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="refreshFilesButton" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="refreshFilesButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="downloadButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane2" max="32767" attributes="0"/>
                   </Group>
@@ -319,12 +321,18 @@
     </Component>
     <Component class="javax.swing.JButton" name="refreshFilesButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Atualizar Ficheiros"/>
+        <Property name="text" type="java.lang.String" value="Atualizar"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshFilesButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="downloadButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Transferir "/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
