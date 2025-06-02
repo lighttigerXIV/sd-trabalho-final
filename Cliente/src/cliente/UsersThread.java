@@ -34,7 +34,8 @@ public class UsersThread implements Runnable {
         do {
             try {
                 int selectedIndex = clientsList.getSelectedIndex();
-                String selectedUsername = users.get(selectedIndex).getUserName();
+
+                String selectedUsername = (selectedIndex == -1) ? null : users.get(selectedIndex).getUserName();
 
                 users = serverInterface.getUsers();
 
@@ -47,10 +48,12 @@ public class UsersThread implements Runnable {
                 });
 
                 clientsList.setModel(listModel);
-                User user = users.stream().filter(u -> u.getUserName().equals(selectedUsername)).findFirst().orElse(null);
 
-                int userIndex = users.indexOf(user);
-                clientsList.setSelectedIndex(userIndex);
+                if (selectedUsername != null) {
+                    User user = users.stream().filter(u -> u.getUserName().equals(selectedUsername)).findFirst().orElse(null);
+                    int userIndex = users.indexOf(user);
+                    clientsList.setSelectedIndex(userIndex);
+                }
 
                 TimeUnit.SECONDS.sleep(5);
             } catch (Exception e) {
