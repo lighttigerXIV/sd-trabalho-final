@@ -40,7 +40,6 @@ public class LogsThread implements Runnable {
                 });
 
                 logsList.setModel(model);
-                System.out.println("batata");
             } catch (Exception e) {
                 System.out.println(e);
             }

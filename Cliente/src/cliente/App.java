@@ -4,7 +4,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -56,6 +55,8 @@ public class App extends javax.swing.JFrame {
                     ipField.setEnabled(true);
                     portField.setEnabled(true);
                     usernameField.setEnabled(true);
+                    refreshFilesButton.setEnabled(true);
+
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -145,7 +146,6 @@ public class App extends javax.swing.JFrame {
         jScrollPane2.setViewportView(filesList);
 
         jPanel1.setBackground(new java.awt.Color(249, 249, 249));
-        jPanel1.setForeground(new java.awt.Color(0, 0, 0));
 
         labelConfiguracoes.setFont(new java.awt.Font("Inter Display", 1, 18)); // NOI18N
         labelConfiguracoes.setText("Configurações");
@@ -263,6 +263,7 @@ public class App extends javax.swing.JFrame {
         labelUsername2.setText("Utilizadores");
 
         refreshFilesButton.setText("Atualizar Ficheiros");
+        refreshFilesButton.setEnabled(false);
         refreshFilesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshFilesButtonActionPerformed(evt);
@@ -327,9 +328,19 @@ public class App extends javax.swing.JFrame {
         try {
 
             if (loggedIn == false) {
-
                 ip = ipField.getText();
                 username = usernameField.getText();
+
+                boolean canConnect = InetAddress.getByName(ip).isReachable(2000);
+
+                if (!canConnect) {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro ao tentar fazer ligacão com o servidor",
+                            "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    return;
+                }
 
                 Registry registry = LocateRegistry.getRegistry(ip, 1099);
                 serverInterface = (ServerInterface) registry.lookup("projeto-sd");
@@ -370,6 +381,7 @@ public class App extends javax.swing.JFrame {
                 ipField.setEnabled(false);
                 portField.setEnabled(false);
                 usernameField.setEnabled(false);
+                refreshFilesButton.setEnabled(true);
                 loggedIn = true;
 
                 logsThread = new LogsThread(serverInterface, username, logsList);
@@ -377,7 +389,7 @@ public class App extends javax.swing.JFrame {
                 thread.start();
 
             } else {
-                Result result = serverInterface.logout(username);
+                serverInterface.logout(username);
                 loggedIn = false;
                 logsThread.kill();
                 username = null;
@@ -386,6 +398,7 @@ public class App extends javax.swing.JFrame {
                 ipField.setEnabled(true);
                 portField.setEnabled(true);
                 usernameField.setEnabled(true);
+                refreshFilesButton.setEnabled(false);
             }
 
         } catch (Exception e) {
