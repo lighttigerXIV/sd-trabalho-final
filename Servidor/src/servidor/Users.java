@@ -3,6 +3,7 @@ package servidor;
 import rmi.User;
 import java.util.ArrayList;
 import java.util.List;
+import rmi.ClientInterface;
 import rmi.Result;
 
 public class Users {
@@ -28,14 +29,14 @@ public class Users {
         return users;
     }
 
-    public Result login(String username, String sharedPath, List<String> files) {
+    public Result login(String username, String sharedPath, List<String> files, ClientInterface clientInterface) {
         User user = getUser(username);
 
         if (user != null) {
             return new Result(false, "Utilizador já existe");
         }
 
-        users.add(new User(username, sharedPath, files));
+        users.add(new User(username, sharedPath, files, clientInterface));
 
         return new Result(true, "Utilizador adicionado com sucesso");
     }

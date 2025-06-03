@@ -6,6 +6,7 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.ArrayList;
 import java.util.List;
+import rmi.ClientInterface;
 import rmi.Log;
 import rmi.Result;
 import rmi.ServerInterface;
@@ -40,13 +41,13 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public Result login(String username, String sharedPath, List<String> files) throws RemoteException {
-
-        Result result = users.login(username, sharedPath, files);
+    public Result login(String username, String sharedPath, List<String> files, ClientInterface clientInterface) throws RemoteException {
+        Result result = users.login(username, sharedPath, files, clientInterface);
 
         if (result.getSuccess()) {
             logs.addLog(username + " fez Login!");
         }
+
         return result;
     }
 
@@ -101,6 +102,29 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
         newUsers.set(index, user);
         users.setUsers(newUsers);
+    }
+
+    @Override
+    public void requestFile(String fileName, String receiverUsername, String hostUsername) throws RemoteException {
+        System.out.println("O server recebeu o pedido de transferência");
+
+        User receiverUser = users.getUser(receiverUsername);
+
+        receiverUser.getClientInterface().requestFile(fileName, receiverUsername, hostUsername);
+    }
+
+    @Override
+    public void sendFile(byte[] content, String fileName, String receiverUsername, String hostUsername) throws RemoteException {
+        System.out.println("O server recebeu o ficheiro");
+
+        User hostUser = users.getUser(hostUsername);
+        hostUser.getClientInterface().sendFile(new byte[2], fileName, receiverUsername, hostUsername);
+    }
+
+    @Override
+    public void acknowledge(String fileName, String receiverUsername, String hostUsername) throws RemoteException {
+        System.out.println("Server recebeu o acknowledge");
+        logs.addLog(String.format("%s transferiu o ficheiro '%s' de %s", receiverUsername, fileName, hostUsername));
     }
 
 }

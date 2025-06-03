@@ -9,11 +9,13 @@ public class User implements Serializable {
     String sharedPath;
     Long loginTimestamp;
     List<String> files;
+    ClientInterface clientInterface;
 
-    public User(String userName, String sharedPath, List<String> files) {
+    public User(String userName, String sharedPath, List<String> files, ClientInterface clientInterface) {
         this.userName = userName;
         this.sharedPath = sharedPath;
         this.files = files;
+        this.clientInterface = clientInterface;
         this.loginTimestamp = System.currentTimeMillis() / 1000;
     }
 
@@ -43,6 +45,10 @@ public class User implements Serializable {
 
     public Long getLoginTimestamp() {
         return loginTimestamp;
+    }
+
+    public ClientInterface getClientInterface() {
+        return clientInterface;
     }
 
 }

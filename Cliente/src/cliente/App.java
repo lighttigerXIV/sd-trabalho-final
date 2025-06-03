@@ -38,6 +38,7 @@ public class App extends javax.swing.JFrame {
     private SendFilesThread sendFilesThread;
     private boolean loggedIn = false;
     private String selectedUsername = "";
+    private FileTransfer fileTransfer;
 
     public App() {
         initComponents();
@@ -84,7 +85,16 @@ public class App extends javax.swing.JFrame {
             filesList.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println(e.getClickCount());
+                    try {
+                        if (e.getClickCount() == 2) {
+                            String fileName = filesList.getSelectedValue();
+                            String selectedUsername = clientsList.getSelectedValue();
+
+                            serverInterface.requestFile(fileName, username, selectedUsername);
+                        }
+                    } catch (Exception ee) {
+                        ee.printStackTrace();
+                    }
                 }
             });
 
@@ -135,6 +145,7 @@ public class App extends javax.swing.JFrame {
         clientsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(clientsList);
 
+        filesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(filesList);
 
         jPanel1.setBackground(new java.awt.Color(249, 249, 249));
@@ -148,7 +159,7 @@ public class App extends javax.swing.JFrame {
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
 
-        ipField.setText("192.168.18.59");
+        ipField.setText("192.168.84.80");
 
         labelServidor1.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor1.setText("Porta");
@@ -181,6 +192,7 @@ public class App extends javax.swing.JFrame {
         labelPartilha1.setFont(new java.awt.Font("Inter Display", 1, 18)); // NOI18N
         labelPartilha1.setText("Partilha");
 
+        logsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane4.setViewportView(logsList);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -419,6 +431,7 @@ public class App extends javax.swing.JFrame {
 
             Registry registry = LocateRegistry.getRegistry(ip, 1099);
             serverInterface = (ServerInterface) registry.lookup("projeto-sd");
+            fileTransfer = new FileTransfer(serverInterface);
 
             List<String> files = new ArrayList<>();
 
@@ -428,7 +441,7 @@ public class App extends javax.swing.JFrame {
                 }
             });
 
-            Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
+            Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files, fileTransfer);
 
             if (!loginResult.getSuccess()) {
                 JOptionPane.showMessageDialog(this,
