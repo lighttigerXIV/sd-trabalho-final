@@ -108,17 +108,16 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     public void requestFile(String fileName, String receiverUsername, String hostUsername) throws RemoteException {
         System.out.println("O server recebeu o pedido de transferência");
 
-        User receiverUser = users.getUser(receiverUsername);
-
-        receiverUser.getClientInterface().requestFile(fileName, receiverUsername, hostUsername);
+        User hostUser = users.getUser(hostUsername);
+        hostUser.getClientInterface().requestFile(fileName, receiverUsername, hostUsername);
     }
 
     @Override
     public void sendFile(byte[] content, String fileName, String receiverUsername, String hostUsername) throws RemoteException {
         System.out.println("O server recebeu o ficheiro");
 
-        User hostUser = users.getUser(hostUsername);
-        hostUser.getClientInterface().saveFile(content, fileName, receiverUsername, hostUsername);
+        User receiverUser = users.getUser(receiverUsername);
+        receiverUser.getClientInterface().saveFile(content, fileName, receiverUsername, hostUsername);
     }
 
     @Override

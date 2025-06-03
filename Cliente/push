@@ -1,0 +1,67 @@
+#!/bin/python
+
+import subprocess
+
+try:
+    print("""
+Type of commit:
+1) Feature
+2) Bug Fix
+3) Documentation
+4) Refactor
+5) Performance
+6) Tests
+7) Dependencies
+8) Chore""")
+    commit_action = int(input("> "))
+
+    modified_files = input("What file(s) were modified?\n> ")
+
+    commit_message = ""
+
+    if commit_action == 1:
+        commit_message += f"✨ feature({modified_files})"
+
+    elif commit_action == 2:
+        commit_message += f"🩹 fix({modified_files})"
+
+    elif commit_action == 3:
+        commit_message += f"📑 docs({modified_files})"
+
+    elif commit_action == 4:
+        commit_message += f"♻️ refactor({modified_files})"
+
+    elif commit_action == 5:
+        commit_message += f"🚀 performance({modified_files})"
+
+    elif commit_action == 6:
+        commit_message += f"✅ tests({modified_files})"
+
+    elif commit_action == 7:
+        commit_message += f"📦 dependencies({modified_files})"
+
+    elif commit_action == 8:
+        commit_message += f"🧹 chore({modified_files})"
+
+    else:
+        print("Invalid action")
+        exit(1)
+
+    message = input("Commit message.\n> ")
+
+    if len(message.strip()) == 0:
+        print("Empty message !!!")
+        exit(1)
+
+    commit_message += f" {message}"
+
+    print(f"Final commit message:\n{commit_message}")
+
+    input("\nPress enter to continue ...")
+
+    subprocess.run(
+        f"git add -A; git commit -m '{commit_message}'; git push", shell=True)
+
+except Exception as e:
+    raise e
+

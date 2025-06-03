@@ -24,9 +24,6 @@ import rmi.User;
 /// Seletor de ficheiros -> https://www.rgagnon.com/javadetails/java-0370.html
 /// Listagem de ficheiros -> https://www.geeksforgeeks.org/list-all-files-from-a-directory-recursively-in-java/
 
-
-
-
 public class App extends javax.swing.JFrame {
 
     private String ip;
@@ -87,11 +84,7 @@ public class App extends javax.swing.JFrame {
                 public void mouseClicked(MouseEvent e) {
                     try {
                         if (e.getClickCount() == 2) {
-                            String fileName = filesList.getSelectedValue();
-                            String selectedUsername = clientsList.getSelectedValue();
-
-                            serverInterface.requestFile(fileName, username, selectedUsername);
-                            System.out.println(selectedUsername);
+                            downloadFile();
                         }
                     } catch (Exception ee) {
                         ee.printStackTrace();
@@ -377,7 +370,7 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshFilesButtonActionPerformed
 
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
-        // TODO add your handling code here:
+        downloadFile();
     }//GEN-LAST:event_downloadButtonActionPerformed
 
     public static void main(String args[]) {
@@ -497,6 +490,20 @@ public class App extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void downloadFile() {
+        try {
+            String fileName = filesList.getSelectedValue();
+
+            if (fileName != null) {
+                String selectedUsername = clientsList.getSelectedValue();
+                serverInterface.requestFile(fileName, username, selectedUsername);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

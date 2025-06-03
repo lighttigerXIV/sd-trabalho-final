@@ -24,10 +24,9 @@ public class FileTransfer extends UnicastRemoteObject implements ClientInterface
         try {
 
             System.out.println("O cliente recebeu um pedido de transferência");
-            System.out.println(sharedFolder);
 
             // Obter bytes do ficheiro
-            byte[] fileBytes = Files.readAllBytes(Paths.get(sharedFolder + "\\" + fileName));
+            byte[] fileBytes = Files.readAllBytes(Paths.get(sharedFolder + "/" + fileName));
 
             serverInterface.sendFile(fileBytes, fileName, receiverUsername, hostUsername);
 
@@ -42,7 +41,8 @@ public class FileTransfer extends UnicastRemoteObject implements ClientInterface
 
         try {
 
-            FileOutputStream fos = new FileOutputStream(fileName);
+            String path = sharedFolder + "/" + fileName;
+            FileOutputStream fos = new FileOutputStream(path);
             fos.write(content);
 
             System.out.println("O cliente recebeu o ficheiro");
