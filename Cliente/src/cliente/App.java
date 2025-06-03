@@ -91,6 +91,7 @@ public class App extends javax.swing.JFrame {
                             String selectedUsername = clientsList.getSelectedValue();
 
                             serverInterface.requestFile(fileName, username, selectedUsername);
+                            System.out.println(selectedUsername);
                         }
                     } catch (Exception ee) {
                         ee.printStackTrace();
@@ -271,6 +272,11 @@ public class App extends javax.swing.JFrame {
 
         downloadButton.setText("Transferir ");
         downloadButton.setEnabled(false);
+        downloadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -370,6 +376,10 @@ public class App extends javax.swing.JFrame {
 
     }//GEN-LAST:event_refreshFilesButtonActionPerformed
 
+    private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_downloadButtonActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -431,7 +441,7 @@ public class App extends javax.swing.JFrame {
 
             Registry registry = LocateRegistry.getRegistry(ip, 1099);
             serverInterface = (ServerInterface) registry.lookup("projeto-sd");
-            fileTransfer = new FileTransfer(serverInterface);
+            fileTransfer = new FileTransfer(serverInterface, sharedFolder);
 
             List<String> files = new ArrayList<>();
 

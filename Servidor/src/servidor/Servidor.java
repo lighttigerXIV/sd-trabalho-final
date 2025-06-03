@@ -118,7 +118,7 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
         System.out.println("O server recebeu o ficheiro");
 
         User hostUser = users.getUser(hostUsername);
-        hostUser.getClientInterface().sendFile(new byte[2], fileName, receiverUsername, hostUsername);
+        hostUser.getClientInterface().saveFile(content, fileName, receiverUsername, hostUsername);
     }
 
     @Override
