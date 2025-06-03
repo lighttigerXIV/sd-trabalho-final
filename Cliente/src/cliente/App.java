@@ -35,7 +35,7 @@ public class App extends javax.swing.JFrame {
     private ServerInterface serverInterface;
     private LogsThread logsThread;
     private UsersThread usersThread;
-    private FilesThread filesThread;
+    private SendFilesThread sendFilesThread;
     private boolean loggedIn = false;
     private String selectedUsername = "";
 
@@ -45,19 +45,7 @@ public class App extends javax.swing.JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // Call your function or logic to decide whether to close
-                try {
-                    Result result = serverInterface.logout(username);
-                    loggedIn = false;
-                    logsThread.kill();
-                    usersThread.kill();
-                    username = null;
-
-                    toggleElements();
-
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
+                logout();
             }
         });
 
@@ -166,11 +154,6 @@ public class App extends javax.swing.JFrame {
         labelServidor1.setText("Porta");
 
         portField.setText("1099");
-        portField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                portFieldActionPerformed(evt);
-            }
-        });
 
         labelPartilha.setFont(new java.awt.Font("Inter Display", 1, 18)); // NOI18N
         labelPartilha.setText("Logs");
@@ -337,66 +320,9 @@ public class App extends javax.swing.JFrame {
         try {
 
             if (loggedIn == false) {
-                ip = ipField.getText();
-                username = usernameField.getText();
-
-                boolean canConnect = InetAddress.getByName(ip).isReachable(400);
-
-                if (!canConnect) {
-                    JOptionPane.showMessageDialog(this,
-                            "Erro ao tentar fazer ligacão com o servidor",
-                            "Erro",
-                            JOptionPane.ERROR_MESSAGE);
-
-                    return;
-                }
-
-                Registry registry = LocateRegistry.getRegistry(ip, 1099);
-                serverInterface = (ServerInterface) registry.lookup("projeto-sd");
-
-                List<String> files = new ArrayList<>();
-
-                Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
-                    if (new File(path.toString()).isFile()) {
-                        files.add(path.toString());
-                    }
-                });
-
-                Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
-
-                if (!loginResult.getSuccess()) {
-                    JOptionPane.showMessageDialog(this,
-                            loginResult.getMessage(),
-                            "Erro",
-                            JOptionPane.ERROR_MESSAGE);
-
-                    return;
-                }
-
-                loggedIn = true;
-                toggleElements();
-
-                logsThread = new LogsThread(serverInterface, username, logsList);
-                Thread lThread = new Thread(logsThread);
-                lThread.start();
-
-                usersThread = new UsersThread(serverInterface, clientsList);
-                Thread uThread = new Thread(usersThread);
-                uThread.start();
-
-                filesThread = new FilesThread(filesList, serverInterface, username, sharedFolder);
-                Thread fThread = new Thread(filesThread);
-                fThread.start();
-
+                login();
             } else {
-                serverInterface.logout(username);
-                loggedIn = false;
-                logsThread.kill();
-                usersThread.kill();
-                filesThread.kill();
-                username = null;
-
-                toggleElements();
+                logout();
             }
 
         } catch (Exception e) {
@@ -404,17 +330,11 @@ public class App extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_sessionButtonActionPerformed
 
-    private void portFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_portFieldActionPerformed
-
     private void refreshFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshFilesButtonActionPerformed
 
         try {
 
-            filesThread.refreshFiles();
-
-            fetchUsers();
+            sendFilesThread.refreshFiles();
 
             for (User user : serverInterface.getUsers()) {
                 if (user.getUserName().equals(selectedUsername)) {
@@ -481,8 +401,79 @@ public class App extends javax.swing.JFrame {
         sessionButton.setText(loggedIn ? "Terminar Sessão" : "Iniciar Sessão");
     }
 
-    private void fetchUsers() {
+    private void login() {
+        try {
+            ip = ipField.getText();
+            username = usernameField.getText();
 
+            boolean canConnect = InetAddress.getByName(ip).isReachable(400);
+
+            if (!canConnect) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro ao tentar fazer ligacão com o servidor",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
+
+            Registry registry = LocateRegistry.getRegistry(ip, 1099);
+            serverInterface = (ServerInterface) registry.lookup("projeto-sd");
+
+            List<String> files = new ArrayList<>();
+
+            Files.newDirectoryStream(sharedFolder.toPath()).forEach(path -> {
+                if (new File(path.toString()).isFile()) {
+                    files.add(path.toString());
+                }
+            });
+
+            Result loginResult = serverInterface.login(username, sharedFolder.getAbsolutePath(), files);
+
+            if (!loginResult.getSuccess()) {
+                JOptionPane.showMessageDialog(this,
+                        loginResult.getMessage(),
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
+
+            loggedIn = true;
+            toggleElements();
+
+            logsThread = new LogsThread(serverInterface, username, logsList);
+            Thread lThread = new Thread(logsThread);
+            lThread.start();
+
+            usersThread = new UsersThread(serverInterface, clientsList, filesList);
+            Thread uThread = new Thread(usersThread);
+            uThread.start();
+
+            sendFilesThread = new SendFilesThread(filesList, serverInterface, username, sharedFolder);
+            Thread sfThread = new Thread(sendFilesThread);
+            sfThread.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logout() {
+        try {
+            if (loggedIn) {
+                serverInterface.logout(username);
+                loggedIn = false;
+                username = null;
+
+                logsThread.kill();
+                usersThread.kill();
+                sendFilesThread.kill();
+
+                toggleElements();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -9,7 +9,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import rmi.ServerInterface;
 
-public class FilesThread implements Runnable {
+public class SendFilesThread implements Runnable {
 
     private JList filesList;
     private ServerInterface serverInterface;
@@ -17,7 +17,7 @@ public class FilesThread implements Runnable {
     private String username;
     private File sharedFolder;
 
-    public FilesThread(JList filesList, ServerInterface serverInterface, String username, File sharedFolder) {
+    public SendFilesThread(JList filesList, ServerInterface serverInterface, String username, File sharedFolder) {
         this.filesList = filesList;
         this.serverInterface = serverInterface;
         this.run = true;
@@ -54,7 +54,6 @@ public class FilesThread implements Runnable {
             try {
                 refreshFiles();
                 TimeUnit.SECONDS.sleep(30);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
