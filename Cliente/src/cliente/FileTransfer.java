@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import rmi.ClientInterface;
 import rmi.ServerInterface;
 
@@ -52,7 +53,10 @@ public class FileTransfer extends UnicastRemoteObject implements ClientInterface
             System.out.println("O cliente recebeu o ficheiro");
             serverInterface.acknowledge(fileName, receiverUsername, hostUsername);
 
-            JOptionPane.showMessageDialog(mainFrame, "Ficheiro transferido como sucesso!");
+            //Sem os SwingUtilities a dialogs bloqueia a aplicação e o dialog não é apresentado completamente.
+            SwingUtilities.invokeLater(() -> {
+                JOptionPane.showMessageDialog(mainFrame, "Ficheiro transferido como sucesso!");
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
