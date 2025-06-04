@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import rmi.ClientInterface;
 import rmi.ServerInterface;
 
@@ -13,10 +15,12 @@ public class FileTransfer extends UnicastRemoteObject implements ClientInterface
 
     private ServerInterface serverInterface;
     private File sharedFolder;
+    private JFrame mainFrame;
 
-    public FileTransfer(ServerInterface serverInterface, File sharedFolder) throws RemoteException {
+    public FileTransfer(ServerInterface serverInterface, File sharedFolder, JFrame mainFrame) throws RemoteException {
         this.serverInterface = serverInterface;
         this.sharedFolder = sharedFolder;
+        this.mainFrame = mainFrame;
     }
 
     @Override
@@ -47,6 +51,8 @@ public class FileTransfer extends UnicastRemoteObject implements ClientInterface
 
             System.out.println("O cliente recebeu o ficheiro");
             serverInterface.acknowledge(fileName, receiverUsername, hostUsername);
+
+            JOptionPane.showMessageDialog(mainFrame, "Ficheiro transferido como sucesso!");
 
         } catch (Exception e) {
             e.printStackTrace();

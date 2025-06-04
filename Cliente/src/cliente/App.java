@@ -23,6 +23,7 @@ import rmi.User;
 /// Dialogo -> https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
 /// Seletor de ficheiros -> https://www.rgagnon.com/javadetails/java-0370.html
 /// Listagem de ficheiros -> https://www.geeksforgeeks.org/list-all-files-from-a-directory-recursively-in-java/
+/// Dialog de confirmação -> https://mkyong.com/swing/java-swing-how-to-make-a-confirmation-dialog/
 
 public class App extends javax.swing.JFrame {
 
@@ -434,7 +435,7 @@ public class App extends javax.swing.JFrame {
 
             Registry registry = LocateRegistry.getRegistry(ip, 1099);
             serverInterface = (ServerInterface) registry.lookup("projeto-sd");
-            fileTransfer = new FileTransfer(serverInterface, sharedFolder);
+            fileTransfer = new FileTransfer(serverInterface, sharedFolder, this);
 
             List<String> files = new ArrayList<>();
 
@@ -497,7 +498,24 @@ public class App extends javax.swing.JFrame {
             String fileName = filesList.getSelectedValue();
 
             if (fileName != null) {
+                String finalPath = sharedFolder + "/" + fileName;
+
+                int option = JOptionPane.showConfirmDialog(this, "Quer transferir o ficheiro '" + fileName + "' de " + selectedUsername + "?", null, JOptionPane.YES_NO_OPTION);
+
+                if (option == 1) {
+                    return;
+                }
+
                 String selectedUsername = clientsList.getSelectedValue();
+
+                if (new File(finalPath).exists()) {
+                    option = JOptionPane.showConfirmDialog(this, "Quer substituir o ficheiro na sua pasta partilhada?", null, JOptionPane.YES_NO_OPTION);
+
+                    if (option == 1) {
+                        return;
+                    }
+                }
+
                 serverInterface.requestFile(fileName, username, selectedUsername);
             }
         } catch (Exception e) {
