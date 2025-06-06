@@ -14,14 +14,11 @@ import rmi.User;
 
 public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
-    Users users;
-    Logs logs;
+    static final Users users = new Users();
+    static final Logs logs = new Logs();
 
     public Servidor() throws RemoteException {
         super();
-
-        users = new Users();
-        logs = new Logs();
     }
 
     public static void main(String[] args) {
@@ -42,74 +39,87 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public Result login(String username, String sharedPath, List<String> files, ClientInterface clientInterface) throws RemoteException {
-        Result result = users.login(username, sharedPath, files, clientInterface);
+        synchronized (users) {
+            Result result = users.login(username, sharedPath, files, clientInterface);
 
-        if (result.getSuccess()) {
-            logs.addLog(username + " fez Login!");
+            if (result.getSuccess()) {
+                synchronized (logs) {
+                    logs.addLog(username + " fez Login!");
+                }
+            }
+
+            return result;
         }
-
-        return result;
     }
 
     @Override
     public List<User> getUsers() throws RemoteException {
-        return users.getUsers();
+        synchronized (users) {
+            return users.getUsers();
+
+        }
     }
 
     @Override
     public List<Log> getLogs(String username) throws RemoteException {
+        synchronized (users) {
+            User user = users.getUser(username);
 
-        User user = users.getUser(username);
+            Long userTimestamp = user.getLoginTimestamp();
 
-        Long userTimestamp = user.getLoginTimestamp();
+            ArrayList<Log> userlogs = new ArrayList();
 
-        ArrayList<Log> userlogs = new ArrayList();
+            synchronized (logs) {
+                for (Log log : logs.getLogs()) {
 
-        for (Log log : logs.getLogs()) {
+                    if (log.getTimestamp() >= userTimestamp) {
 
-            if (log.getTimestamp() >= userTimestamp) {
+                        userlogs.add(log);
+                    }
+                }
 
-                userlogs.add(log);
-
+                return userlogs;
             }
-
         }
-
-        return userlogs;
     }
 
     @Override
     public Result logout(String username) throws RemoteException {
+        synchronized (users) {
+            Result result = users.logout(username);
 
-        Result result = users.logout(username);
-
-        if (result.getSuccess()) {
-            logs.addLog(username + " Terminou a Sessao");
+            if (result.getSuccess()) {
+                synchronized (logs) {
+                    logs.addLog(username + " Terminou a Sessao");
+                }
+            }
+            return result;
         }
-        return result;
-
     }
 
     @Override
     public void refreshFiles(String username, List<String> files) throws RemoteException {
+        synchronized (users) {
+            User user = users.getUser(username);
+            int index = users.getUsers().indexOf(user);
 
-        User user = users.getUser(username);
-        int index = users.getUsers().indexOf(user);
+            user.setFiles(files);
 
-        user.setFiles(files);
+            ArrayList<User> newUsers = users.getUsers();
 
-        ArrayList<User> newUsers = users.getUsers();
-
-        newUsers.set(index, user);
-        users.setUsers(newUsers);
+            newUsers.set(index, user);
+            users.setUsers(newUsers);
+        }
     }
 
     @Override
     public void requestFile(String fileName, String receiverUsername, String hostUsername) throws RemoteException {
         System.out.println("O server recebeu o pedido de transferência");
 
-        User hostUser = users.getUser(hostUsername);
-        hostUser.getClientInterface().requestFile(fileName, receiverUsername, hostUsername);
+        synchronized (users) {
+            User hostUser = users.getUser(hostUsername);
+            hostUser.getClientInterface().requestFile(fileName, receiverUsername, hostUsername);
+        }
     }
 
     @Override
@@ -123,7 +133,9 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     @Override
     public void acknowledge(String fileName, String receiverUsername, String hostUsername) throws RemoteException {
         System.out.println("Server recebeu o acknowledge");
-        logs.addLog(String.format("%s transferiu o ficheiro '%s' de %s", receiverUsername, fileName, hostUsername));
+        synchronized (logs) {
+            logs.addLog(String.format("%s transferiu o ficheiro '%s' de %s", receiverUsername, fileName, hostUsername));
+        }
     }
 
 }
