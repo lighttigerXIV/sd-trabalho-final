@@ -154,8 +154,6 @@ public class App extends javax.swing.JFrame {
         labelServidor.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor.setText("Endereço Servidor");
 
-        ipField.setText("192.168.84.80");
-
         labelServidor1.setFont(new java.awt.Font("Inter Display", 1, 15)); // NOI18N
         labelServidor1.setText("Porta");
 
