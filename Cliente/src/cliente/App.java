@@ -15,6 +15,8 @@ import rmi.ServerInterface;
 import java.rmi.registry.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import rmi.Result;
 import rmi.User;
@@ -24,6 +26,7 @@ import rmi.User;
 /// Seletor de ficheiros -> https://www.rgagnon.com/javadetails/java-0370.html
 /// Listagem de ficheiros -> https://www.geeksforgeeks.org/list-all-files-from-a-directory-recursively-in-java/
 /// Dialog de confirmação -> https://mkyong.com/swing/java-swing-how-to-make-a-confirmation-dialog/
+/// Listener do textfield -> https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield
 
 public class App extends javax.swing.JFrame {
 
@@ -96,6 +99,57 @@ public class App extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.println(e);
         }
+        
+        usernameField.getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+        });
+        
+        portField.getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+        });
+        
+        ipField.getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkEmptyFields();
+            }
+        });
     }
 
     /**
@@ -520,6 +574,19 @@ public class App extends javax.swing.JFrame {
             e.printStackTrace();
         }
 
+    }
+    
+    private void checkEmptyFields(){
+        String usernameText = usernameField.getText();
+        String portText = portField.getText();
+        String ipText = ipField.getText();
+        
+        sessionButton.setEnabled(
+                !usernameText.trim().isEmpty()
+                && !portText.trim().isEmpty()
+                && !ipText.trim().isEmpty()
+                && sharedFolder != null
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
