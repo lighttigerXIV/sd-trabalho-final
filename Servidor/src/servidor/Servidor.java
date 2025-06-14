@@ -6,6 +6,7 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import rmi.ClientInterface;
 import rmi.Log;
 import rmi.Result;
@@ -24,13 +25,39 @@ public class Servidor extends UnicastRemoteObject implements ServerInterface {
     public static void main(String[] args) {
 
         try {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("----------------------------------");
+            System.out.println("Configuração da Porta");
+            System.out.println("----------------------------------");
+            System.out.println("1) Usar porta 1099");
+            System.out.println("2) Usar porta costumizada");
+            System.out.print("\n> ");
+
+            int option = scanner.nextInt();
+            int port = 1099;
+
+            if (option == 2) {
+                System.out.print("Insira a porta: ");
+                port = scanner.nextInt();
+            } else if (option != 1) {
+                System.out.println("Opção Inválida");
+                System.exit(1);
+            }
+
             Servidor server = new Servidor();
-            Registry reg = LocateRegistry.createRegistry(1099);
+            Registry reg = LocateRegistry.createRegistry(port);
 
             reg.rebind("projeto-sd", server);
 
-            System.out.println("IP: " + InetAddress.getLocalHost().getHostAddress());
-            System.out.println("Porta: 1099");
+            System.out.println("\n\n----------------------------------");
+            System.out.println("Dados de conexão");
+            System.out.println("----------------------------------");
+
+            System.out.println("Endereço: " + InetAddress.getLocalHost().getHostAddress());
+            System.out.println("Porta: " + port);
+
+            scanner.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
